@@ -27,7 +27,7 @@ class PredictedOptionList(BaseModel):
         sum_of_probabilities = sum(
             option.probability for option in self.predicted_options
         )
-        if sum_of_probabilities > 1.01 or sum_of_probabilities < 0.99:
+        if sum_of_probabilities > 1.02 or sum_of_probabilities < 0.98:
             raise ValueError(
                 f"Sum of option probabilities {sum_of_probabilities} is "
                 "too far from 1 to be confident that normalization will deliver an "
