@@ -65,7 +65,7 @@ class MetaculusApi:
         cls,
         post_id: int,
         comment_text: str,
-        is_private: bool = True,
+        is_private: bool = False,
         included_forecast: bool = True,
     ) -> None:
         return cls.METACULUS_CLIENT.post_question_comment(
