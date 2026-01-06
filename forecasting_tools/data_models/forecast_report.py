@@ -41,9 +41,9 @@ class ForecastReport(BaseModel, Jsonable, ABC):
 
     @field_validator("explanation")
     @classmethod
-    def validate_explanation_starts_with_hash(cls, v: str) -> str:
-        if not v.strip().startswith("#"):
-            raise ValueError("Explanation must start with a '#' character")
+    def validate_explanation_not_empty(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("Explanation must not be empty")
         return v
 
     @property
@@ -52,29 +52,45 @@ class ForecastReport(BaseModel, Jsonable, ABC):
 
     @property
     def summary(self) -> str:
-        return self._get_and_validate_section(
-            index=0, expected_word="summary"
-        ).text_of_section_and_subsections
+        """Return summary section if it exists, otherwise return the full explanation."""
+        try:
+            return self._get_and_validate_section(
+                index=0, expected_word="summary"
+            ).text_of_section_and_subsections
+        except (IndexError, ValueError):
+            return self.explanation
 
     @property
     def research(self) -> str:
-        return self._get_and_validate_section(
-            index=1, expected_word="research"
-        ).text_of_section_and_subsections
+        """Return research section if it exists, otherwise return empty string."""
+        try:
+            return self._get_and_validate_section(
+                index=1, expected_word="research"
+            ).text_of_section_and_subsections
+        except (IndexError, ValueError):
+            return ""
 
     @property
     def forecast_rationales(self) -> str:
-        return self._get_and_validate_section(
-            index=2, expected_word="forecast"
-        ).text_of_section_and_subsections
+        """Return forecast rationales section if it exists, otherwise return the full explanation."""
+        try:
+            return self._get_and_validate_section(
+                index=2, expected_word="forecast"
+            ).text_of_section_and_subsections
+        except (IndexError, ValueError):
+            return self.explanation
 
     @property
     def first_rationale(self) -> str:
-        return (
-            self._get_and_validate_section(index=2, expected_word="forecast")
-            .sub_sections[0]
-            .text_of_section_and_subsections
-        )
+        """Return first rationale subsection if it exists, otherwise return the full explanation."""
+        try:
+            return (
+                self._get_and_validate_section(index=2, expected_word="forecast")
+                .sub_sections[0]
+                .text_of_section_and_subsections
+            )
+        except (IndexError, ValueError):
+            return self.explanation
 
     @property
     def expected_baseline_score(self) -> float | None:
