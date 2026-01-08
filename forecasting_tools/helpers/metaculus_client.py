@@ -223,7 +223,7 @@ class MetaculusClient:
         self,
         post_id: int,
         comment_text: str,
-        is_private: bool = False,
+        is_private: bool = True,
         included_forecast: bool = True,
     ) -> None:
         self._sleep_between_requests()
